@@ -1,7 +1,7 @@
 /**
  * @file synced_cli.c
  * @brief synced command-line interface main program
- * @note Copyright (C) [2021-2024] Renesas Electronics Corporation and/or its affiliates
+ * @note Copyright (C) [2021-2025] Renesas Electronics Corporation and/or its affiliates
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2, as published
@@ -16,9 +16,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 /********************************************************************************************************************
-* Release Tag: 2-0-8
-* Pipeline ID: 426834
-* Commit Hash: 62f27b58
+* Release Tag: 2-0-9
+* Pipeline ID: 450408
+* Commit Hash: 3898adc5
 ********************************************************************************************************************/
 
 #include <arpa/inet.h>
@@ -40,9 +40,9 @@
 #error __linux__ is not defined!
 #endif /* __linux__ */
 
-#define VERSION_ID    "2.0.8"
-#define PIPELINE_ID   "426834"
-#define COMMIT_ID     "62f27b58"
+#define VERSION_ID    "2.0.9"
+#define PIPELINE_ID   "450408"
+#define COMMIT_ID     "3898adc5"
 
 #define CLI_BUFF_SIZE   128
 
@@ -128,9 +128,10 @@ static int g_command_line_mode = 0;
  *                                                  +----------------+
  *                                                  COMMAND_QUEUE_SIZE
  */
-static T_command g_command_queue[COMMAND_QUEUE_SIZE] = {0};
-static int g_command_queue_head = 0;                        /* Index of next command to be popped from queue and then executed */
-static int g_command_queue_tail = 0;                        /* Index of next command to be pushed to queue */
+static T_command g_command_queue[COMMAND_QUEUE_SIZE] = {{0}};
+
+static int g_command_queue_head = 0;  /* Index of next command to be popped from queue and then executed */
+static int g_command_queue_tail = 0;  /* Index of next command to be pushed to queue */
 
 static const char *g_api_code_to_api_code_str[] = {
   "get_sync_info_list",

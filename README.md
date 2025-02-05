@@ -1,5 +1,5 @@
 @file README.md
-<br>@note Copyright (C) [2021-2024] `Renesas Electronics Corporation` and/or its affiliates
+<br>@note Copyright (C) [2021-2025] `Renesas Electronics Corporation` and/or its affiliates
 <br>This program is free software; you can redistribute it and/or modify
 <br>it under the terms of the GNU General Public License version 2, as published by
 <br>the Free Software Foundation.
@@ -13,12 +13,12 @@
 <br>with this program; if not, write to the Free Software Foundation, Inc.,
 <br>51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ***
-Release Tag: 2-0-8
-<br>Pipeline ID: 426834
-<br>Commit Hash: 62f27b58
+Release Tag: 2-0-9
+<br>Pipeline ID: 450408
+<br>Commit Hash: 3898adc5
 ***
 
-# `synced` 2-0-8 README
+# `synced` 2-0-9 README
 
 `synced` is a user space Synchronous Ethernet (Sync-E) stack for the Linux operating system.
 
@@ -121,7 +121,7 @@ the Sync-E clock becomes invalid.
 
 ### 2.1 Configuration
 The **Configuration Module** enables static configuration of `synced` by loading a configuration
-file.
+file. A configuration file must be specified.
 
 ### 2.2 Control
 The **Control Module** selects the best Sync-E clock for the device through a clock selection
