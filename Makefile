@@ -1,6 +1,6 @@
 #####################################################################################################################
 # @file Makefile
-# @note Copyright (C) [2021-2024] Renesas Electronics Corporation and/or its affiliates
+# @note Copyright (C) [2021-2025] Renesas Electronics Corporation and/or its affiliates
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 2, as published
@@ -15,9 +15,9 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 #####################################################################################################################
 #####################################################################################################################
-# Release Tag: 2-0-8
-# Pipeline ID: 426834
-# Commit Hash: 62f27b58
+# Release Tag: 2-0-9
+# Pipeline ID: 450408
+# Commit Hash: 3898adc5
 #####################################################################################################################
 
 ###################
@@ -43,7 +43,7 @@ ifndef CROSS_COMPILE
 $(warning CROSS_COMPILE is not defined)
 endif
 ifeq ($(PLATFORM),arm64)
-override CROSS_COMPILE += /usr/bin/aarch64-linux-gnu-
+override CROSS_COMPILE := /usr/bin/aarch64-linux-gnu-
 $(warning Setting CROSS_COMPILE to $(CROSS_COMPILE))
 endif
 
@@ -70,7 +70,7 @@ PKG_DIR   := pkg
 CFG_DIR   := cfg
 CFG_FILES := $(shell find $(CFG_DIR) -name "*.cfg")
 TCS_FILES := $(shell find $(CFG_DIR) -name "*.tcs")
-RBS_FILES := $(shell find $(CFG_DIR) -name "*.rbs")
+RBS_FILES := $(shell find $(CFG_DIR) -type f -name "*.rbs" -name "*.RBS")
 
 LICENSE_FILE := COPYING
 
@@ -192,11 +192,11 @@ SYNCED_CLI_CFLAGS := \
 	-Wpedantic \
 	-Wextra
 
-.DEFAULT_GOAL := all
-
 ###############
 # T A R G E T S
 ###############
+
+.DEFAULT_GOAL := all
 
 # Target: all
 .PHONY: all
@@ -229,6 +229,7 @@ synced-header:
 	@echo "###############################"
 	@echo "ESMC_STACK: $(ESMC_STACK)"
 	@echo "PLATFORM: $(PLATFORM)"
+	@echo "CC: $(CC)"
 	@echo "CROSS_COMPILE: $(CROSS_COMPILE)"
 	@echo "DEVICE: $(DEVICE)"
 	@echo "SYNCED_DEBUG_MODE: $(SYNCED_DEBUG_MODE)"

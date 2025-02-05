@@ -1,7 +1,7 @@
 /**
  * @file synced.c
  * @brief synced main program
- * @note Copyright (C) [2021-2024] Renesas Electronics Corporation and/or its affiliates
+ * @note Copyright (C) [2021-2025] Renesas Electronics Corporation and/or its affiliates
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2, as published
@@ -16,9 +16,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 /********************************************************************************************************************
-* Release Tag: 2-0-8
-* Pipeline ID: 426834
-* Commit Hash: 62f27b58
+* Release Tag: 2-0-9
+* Pipeline ID: 450408
+* Commit Hash: 3898adc5
 ********************************************************************************************************************/
 
 #include <errno.h>
@@ -50,9 +50,9 @@
 #error __linux__ is not defined!
 #endif /* __linux__ */
 
-#define VERSION_ID    "2.0.8"
-#define PIPELINE_ID   "426834"
-#define COMMIT_ID     "62f27b58"
+#define VERSION_ID    "2.0.9"
+#define PIPELINE_ID   "450408"
+#define COMMIT_ID     "3898adc5"
 
 #define MAIN_LOOP_INTERVAL_MS   100
 
@@ -153,9 +153,6 @@ static int get_port_info(struct config *cfg, T_esmc_network_option net_opt, int 
 
   STAILQ_FOREACH(iface, &cfg->interfaces, list) {
     port_name = interface_get_name(iface);
-
-    /* Initialize sync type */
-    sync_type = E_sync_type_max;
 
     tx_en = config_get_int(cfg, port_name, "tx_en");
     if(tx_en)
@@ -488,7 +485,7 @@ int main(int argc, char *argv[])
   }
 
   opts = config_long_options(cfg);
-  while(EOF != (c = getopt_long(argc, argv, "123f:hi:l:ost:v", opts, &idx))) {
+  while(EOF != (c = getopt_long(argc, argv, "123f:hl:ost:v", opts, &idx))) {
     switch(c) {
       case 0:
         if(config_parse_option(cfg, opts[idx].name, optarg) < 0)
@@ -555,8 +552,14 @@ int main(int argc, char *argv[])
   }
 
   /* If specified, read and parse configuration file */
-  if((cfg_file_name != NULL) && (config_read(cfg_file_name, cfg, &cfg_file_dump, &cfg_file_dump_size) < 0)) {
-    fprintf(stderr, "Failed to read %s\n", cfg_file_name);
+  if(cfg_file_name != NULL) {
+    if(config_read(cfg_file_name, cfg, &cfg_file_dump, &cfg_file_dump_size) < 0) {
+      fprintf(stderr, "Failed to read configuration file %s\n", cfg_file_name);
+      goto quick_end;
+    }
+    printf("\n Opened configuration file %s\n", cfg_file_name);
+  } else {
+    fprintf(stderr, "Missing configuration file\n");
     goto quick_end;
   }
 
@@ -600,19 +603,25 @@ int main(int argc, char *argv[])
     goto end;
   }
 
-  init_tx_port = calloc(num_tx_ports, sizeof(*init_tx_port));
-  if(!init_tx_port) {
-    pr_err("Failed to allocate memory for TX port configuration");
-    goto end;
+  if(num_tx_ports) {
+    /* Check to avoid zero memory allocation using calloc() */
+    init_tx_port = calloc(num_tx_ports, sizeof(*init_tx_port));
+    if(!init_tx_port) {
+      pr_err("Failed to allocate memory for TX port configuration");
+      goto end;
+    }
+    tx_port = init_tx_port;
   }
-  tx_port = init_tx_port;
 
-  init_rx_port = calloc(num_rx_ports, sizeof(*init_rx_port));
-  if(!init_rx_port) {
-    pr_err("Failed to allocate memory for RX port configuration");
-    goto end;
+  if(num_rx_ports) {
+    /* Check to avoid zero memory allocation using calloc() */
+    init_rx_port = calloc(num_rx_ports, sizeof(*init_rx_port));
+    if(!init_rx_port) {
+      pr_err("Failed to allocate memory for RX port configuration");
+      goto end;
+    }
+    rx_port = init_rx_port;
   }
-  rx_port = init_rx_port;
 
   init_sync_config = calloc(num_syncs, sizeof(*init_sync_config));
   if(!init_sync_config) {
@@ -633,7 +642,7 @@ int main(int argc, char *argv[])
     sync_type = interface_get_type(iface);
     sync_idx = sync_counter;
 
-    if(tx_en == 1) {
+    if(num_tx_ports && tx_en) {
       tx_port->name = name;
       tx_port->port_num = interface_get_idx(iface);
       mac_addr = interface_get_mac_addr(iface);
@@ -643,7 +652,7 @@ int main(int argc, char *argv[])
       tx_port++;
     }
 
-    if(rx_en == 1) {
+    if(num_rx_ports && rx_en) {
       rx_port->name = name;
       rx_port->port_num = interface_get_idx(iface);
       mac_addr = interface_get_mac_addr(iface);

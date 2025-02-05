@@ -1,6 +1,6 @@
 /**
  * @file monitor.c
- * @note Copyright (C) [2021-2024] Renesas Electronics Corporation and/or its affiliates
+ * @note Copyright (C) [2021-2025] Renesas Electronics Corporation and/or its affiliates
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2, as published
@@ -15,9 +15,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 /********************************************************************************************************************
-* Release Tag: 2-0-8
-* Pipeline ID: 426834
-* Commit Hash: 62f27b58
+* Release Tag: 2-0-9
+* Pipeline ID: 450408
+* Commit Hash: 3898adc5
 ********************************************************************************************************************/
 
 #include <string.h>
@@ -181,6 +181,7 @@ void monitor_determine_ql(void)
         } else {
           /* Stop the holdover timer to change QL to LO QL immediately */
           g_monitor_data.holdover_monotonic_time_ms = 0;
+          ql = g_monitor_data.lo_ql;
         }
       }
 

@@ -5,9 +5,9 @@
  * @note SPDX-License-Identifier: GPL-2.0+
  */
 /********************************************************************************************************************
-* Release Tag: 2-0-8
-* Pipeline ID: 426834
-* Commit Hash: 62f27b58
+* Release Tag: 2-0-9
+* Pipeline ID: 450408
+* Commit Hash: 3898adc5
 ********************************************************************************************************************/
 
 #include <errno.h>
@@ -119,7 +119,6 @@ int interface_config_idx_and_mac_addr(struct interface *iface)
   const char *name;
   int fd;
   int idx;
-  int ret = 0;
   struct sockaddr_ll mac_addr;
 
   name = interface_get_name(iface);
@@ -134,18 +133,20 @@ int interface_config_idx_and_mac_addr(struct interface *iface)
   }
 
   if(interface_request_net_device_idx(fd, name, &idx) < 0) {
-    ret = -1;
+    close(fd);
+    return -1;
   }
   interface_config_idx(iface, idx);
 
   memset(&mac_addr, 0, sizeof(mac_addr));
   if(interface_request_net_device_mac_addr(fd, name, &mac_addr) < 0) {
-    ret = -1;
+    close(fd);
+    return -1;
   }
   interface_config_mac_addr(iface, &mac_addr);
 
   close(fd);
-  return ret;
+  return 0;
 }
 
 void interface_config_clk_idx(struct interface *iface, int clk_idx)
